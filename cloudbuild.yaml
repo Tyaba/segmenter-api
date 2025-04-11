@@ -1,0 +1,59 @@
+substitutions:
+  _SERVICE_NAME: segmenter-api
+  _GOOGLE_CLOUD_REGION: us-central1
+  _IMAGE_NAME: ${_GOOGLE_CLOUD_REGION}-docker.pkg.dev/${PROJECT_ID}/containers/${_SERVICE_NAME}
+  _ENV: dev
+
+steps:
+  - id: "pull"
+    name: "gcr.io/cloud-builders/docker"
+    waitFor: []
+    env:
+      - "DOCKER_BUILDKIT=1"
+    script: |
+      #!/usr/bin/env bash
+      set -e
+      docker pull ${_IMAGE_NAME}:latest || true
+
+  - id: "build"
+    name: "gcr.io/cloud-builders/docker"
+    waitFor: ["pull"]
+    env:
+      - "DOCKER_BUILDKIT=1"
+    script: |
+      #!/usr/bin/env bash
+      set -eu
+      docker build \
+        -t ${_IMAGE_NAME}:latest \
+        -t ${_IMAGE_NAME}:${SHORT_SHA} \
+        --cache-from ${_IMAGE_NAME}:latest \
+        .
+
+  # chisatoのtag&push
+  - id: "push"
+    name: "gcr.io/cloud-builders/docker"
+    waitFor: ["build"]
+    env:
+      - "DOCKER_BUILDKIT=1"
+    script: |
+      #!/usr/bin/env bash
+      set -eu
+      docker push ${_IMAGE_NAME}:latest
+      docker push ${_IMAGE_NAME}:${SHORT_SHA}
+
+  - id: "terraform-apply"
+    name: "hashicorp/terraform:1.5.6"
+    waitFor: ["push"]
+    script: |
+      #!/usr/bin/env sh
+      terraform init -input=false
+      terraform apply -auto-approve -input=false -var="region=${_GOOGLE_CLOUD_REGION}" -var="project_id=${PROJECT_ID}" -var="service_name=${_SERVICE_NAME}" -var="short_sha=${SHORT_SHA}"
+    dir: infra/envs/${_ENV}
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: "E2_HIGHCPU_32"
+  dynamicSubstitutions: true
+  automapSubstitutions: true
+
+timeout: 1800s # 30分のタイムアウト

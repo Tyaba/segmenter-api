@@ -1,0 +1,37 @@
+[env]
+SHORT_SHA = "{{exec(command='git rev-parse --short HEAD')}}"
+[tasks.short-sha]
+run = "echo $SHORT_SHA"
+
+[tasks.sync]
+run = """
+uv sync --all-groups
+uv pip install -e .
+"""
+[tasks.lint]
+run = "uv run ruff check . --fix"
+[tasks.format]
+run = "uv run ruff format ."
+[tasks.vet]
+depends = ["lint", "format"]
+[tasks.test]
+run = "uv run python -m pytest tests"
+depends = ["sync"]
+
+[tasks.download-stubs]
+run = "uv run mypy --install-types --non-interactive"
+
+[tasks.build]
+run = """
+gcloud builds submit . \
+--config cloudbuild.yaml \
+--project ${GOOGLE_CLOUD_PROJECT} \
+--region ${GOOGLE_CLOUD_REGION} \
+--substitutions=\
+SHORT_SHA=${SHORT_SHA},\
+_SERVICE_NAME=${SERVICE_NAME},\
+_GOOGLE_CLOUD_REGION=${GOOGLE_CLOUD_REGION}
+
+"""
+[tools]
+python = "3.11.7"

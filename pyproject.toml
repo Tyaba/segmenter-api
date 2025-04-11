@@ -1,0 +1,134 @@
+[project]
+name = "segmenter-api"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.12",
+    "gunicorn[standard]>=23.0.0",
+    "injector>=0.22.0",
+    "ipykernel>=6.29.5",
+    "pydantic>=2.8.2",
+    "transformers>=4.51.2",
+    "uvicorn[standard]>=0.34.0",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "ipykernel>=6.29.5",
+    "ipywidgets>=8.1.5",
+    "nbformat>=5.10.4",
+    "ruff>=0.6.4",
+    "pytest>=8.3.3",
+    "mypy>=1.11.2",
+]
+
+
+[tool.mypy]
+strict_optional = true
+warn_redundant_casts = true
+disallow_any_generics = true
+check_untyped_defs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = false
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+line-length = 88
+indent-width = 4
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [  # https://beta.ruff.rs/docs/rules
+    "A",      # flake8-builtins
+    "ARG",    # flake8-unused-arguments
+    "ASYNC",  # flake8-async
+    "B",      # flake8-bugbear
+    "BLE",    # flake8-blind-except
+    "C4",     # flake8-comprehensions
+    "C90",    # McCabe cyclomatic complexity
+    "DJ",     # flake8-django
+    "DTZ",    # flake8-datetimez
+    "E",      # pycodestyle
+    "EM",     # flake8-errmsg
+    "EXE",    # flake8-executable
+    "F",      # Pyflakes
+    "FA",     # flake8-future-annotations
+    "FLY",    # flynt
+    "G",      # flake8-logging-format
+    "I",      # isort
+    "ICN",    # flake8-import-conventions
+    "INP",    # flake8-no-pep420
+    "INT",    # flake8-gettext
+    "N",      # pep8-naming
+    "NPY",    # NumPy-specific rules
+    "PD",     # pandas-vet
+    "PGH",    # pygrep-hooks
+    "PIE",    # flake8-pie
+    "PL",     # Pylint
+    "PT",     # flake8-pytest-style
+    "PYI",    # flake8-pyi
+    "RSE",    # flake8-raise
+    "RUF",    # Ruff-specific rules
+    "S",      # flake8-bandit
+    "SIM",    # flake8-simplify
+    "SLF",    # flake8-self
+    "T10",    # flake8-debugger
+    "TD",     # flake8-todos
+    "TID",    # flake8-tidy-imports
+    "UP",     # pyupgrade
+    "W",      # pycodestyle
+    "YTT",    # flake8-2020
+]
+ignore = [
+    "G004",     # Logging statement uses f-string
+    "S101",     # Use of assert
+    "E203",     # Whitespace before ':'
+    "B008",     # Do not perform function calls in argument defaults
+]
+fixable = ["ALL"]
+unfixable = []
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = false
+docstring-code-line-length = "dynamic"
+

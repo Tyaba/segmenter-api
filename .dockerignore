@@ -1,0 +1,6 @@
+.venv
+notebooks
+models
+.terraform
+data
+uv.lock

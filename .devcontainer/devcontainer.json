@@ -1,0 +1,43 @@
+// For format details, see https://aka.ms/devcontainer.json.
+// 使用可能なデフォルト環境変数: https://containers.dev/implementors/json_reference/#variables-in-devcontainerjson
+// For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+{
+    // ---- docker begins ----
+    "name": "segmenter-api",
+    "build": {
+        "context": "..",
+        "dockerfile": "../Dockerfile"
+    },
+    "runArgs": [
+        "--gpus",
+        "all",
+        "--shm-size=8gb",
+        "--env-file",
+        ".env"
+    ],
+    "workspaceFolder": "/app",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind,consistency=cached",
+    // dockerのmount 絶対PATHしか使えない
+    // targetを/home/${localEnv:USER}でなく/${containerEnv:HOME}にするとマウントに失敗する
+    "mounts": [
+        "source=${localEnv:HOME}/.config/gcloud/,target=/home/${localEnv:USER}/.config/gcloud/,type=bind,consistency=cached"
+    ],
+    "userEnvProbe": "loginInteractiveShell",
+    // ---- docker ends ----
+    // ---- devcontainer begins ----
+    // Features to add to the dev container. More info: https://containers.dev/features.
+    "remoteUser": "${localEnv:USER}",
+    "postAttachCommand": "/bin/bash .devcontainer/postAttachCommand.sh",
+    "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "upgradePackages": true,
+            "username": "${localEnv:USER}",
+            "userUid": "automatic",
+            "userGid": "automatic"
+        }
+    }
+    // ---- devcontainer ends ----
+}
