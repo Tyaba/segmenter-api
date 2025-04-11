@@ -7,7 +7,7 @@ requires-python = ">=3.11"
 dependencies = [
     "einops>=0.8.1",
     "fastapi>=0.115.12",
-    "gunicorn[standard]>=23.0.0",
+    "gunicorn>=23.0.0",
     "injector>=0.22.0",
     "ipykernel>=6.29.5",
     "pillow>=11.1.0",
