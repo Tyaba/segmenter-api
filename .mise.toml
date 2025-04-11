@@ -21,6 +21,10 @@ depends = ["sync"]
 [tasks.download-stubs]
 run = "uv run mypy --install-types --non-interactive"
 
+[tasks.run]
+run = "uv run gunicorn -c src/segmenter_api/gunicorn.conf.py"
+depends = ["sync"]
+
 [tasks.build]
 run = """
 gcloud builds submit . \

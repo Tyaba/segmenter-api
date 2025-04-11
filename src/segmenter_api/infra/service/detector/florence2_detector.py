@@ -7,9 +7,10 @@ from segmenter_api.domain.service.detector import (
     Text2BboxInput,
     Text2BboxOutput,
 )
-
+from segmenter_api.utils.time import stop_watch
 
 class Florence2Detector(Detector):
+    @stop_watch
     def __init__(self):
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         self.torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
@@ -24,6 +25,7 @@ class Florence2Detector(Detector):
         )
         self.task_prompt = "<OPEN_VOCABULARY_DETECTION>"
 
+    @stop_watch
     def text2bbox(self, text2bbox_input: Text2BboxInput) -> Text2BboxOutput:
         prompts = [f"{self.task_prompt}{text}" for text in text2bbox_input.texts]
         # 前処理

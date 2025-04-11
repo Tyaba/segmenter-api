@@ -3,7 +3,7 @@ from functools import partial
 from fastapi import APIRouter, Depends
 
 from segmenter_api.di import resolve
-from segmenter_api.usecase.ui.segmenter import (
+from segmenter_api.usecase.ui.text2segment import (
     Text2SegmentRequest,
     Text2SegmentResponse,
     SegmenterUserInterface,

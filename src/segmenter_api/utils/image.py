@@ -2,7 +2,7 @@ import base64
 from io import BytesIO
 
 from PIL import Image, ImageDraw
-
+import numpy as np
 from segmenter_api.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -44,3 +44,41 @@ def draw_bbox(
     draw = ImageDraw.Draw(image)
     draw.rectangle(bbox, outline=color, width=2)
     return image
+
+
+def image2boolean(image: Image.Image) -> list[list[bool]]:
+    """
+    PIL.Image.Image (L mode) を2次元のブール値リストに変換
+
+    Args:
+        image: PIL.Image.Image (L mode)
+
+    Returns:
+        List[List[bool]]: 2次元のブール値リスト
+    """
+    if image.mode != 'L':
+        raise ValueError("Image must be in 'L' mode")
+
+    # PIL.Imageをnumpy配列に変換
+    arr = np.array(image)
+    # 0より大きい値をTrueに変換
+    bool_arr = arr > 0
+    # numpy配列をPythonのリストに変換
+    return bool_arr.tolist()
+
+def boolean2image(bool_list: list[list[bool]]) -> Image.Image:
+    """
+    2次元のブール値リストをPIL.Image.Image (L mode)に変換
+
+    Args:
+        bool_list: 2次元のブール値リスト
+
+    Returns:
+        Image.Image: PIL.Image.Image (L mode)
+    """
+    # ブール値リストをnumpy配列に変換
+    arr = np.array(bool_list, dtype=np.uint8)
+    # Trueを255に、Falseを0に変換
+    arr = arr * 255
+    # numpy配列からPIL.Imageを作成
+    return Image.fromarray(arr, mode='L')
