@@ -1,13 +1,16 @@
 import torch
 from transformers.models.auto.modeling_auto import AutoModelForCausalLM
 from transformers.models.auto.processing_auto import AutoProcessor
-
+from pathlib import Path
 from segmenter_api.domain.service.detector import (
     Detector,
     Text2BboxInput,
     Text2BboxOutput,
 )
 from segmenter_api.utils.time import stop_watch
+from segmenter_api.settings import get_settings
+
+settings = get_settings()
 
 class Florence2Detector(Detector):
     @stop_watch
@@ -16,12 +19,13 @@ class Florence2Detector(Detector):
         self.torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
 
         self.model = AutoModelForCausalLM.from_pretrained(
-            "microsoft/Florence-2-large",
+            settings.florence2_model_path,
             torch_dtype=self.torch_dtype,
             trust_remote_code=True,
         ).to(self.device)
         self.processor = AutoProcessor.from_pretrained(
-            "microsoft/Florence-2-large", trust_remote_code=True
+            settings.florence2_model_path,
+            trust_remote_code=True,
         )
         self.task_prompt = "<OPEN_VOCABULARY_DETECTION>"
 

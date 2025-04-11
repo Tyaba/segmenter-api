@@ -4,14 +4,21 @@ from segmenter_api.domain.service.segmenter import (
     Segmenter,
 )
 from sam2.sam2_image_predictor import SAM2ImagePredictor
+from sam2.build_sam import build_sam2
 import torch
 import numpy as np
 from PIL import Image
 from segmenter_api.utils.time import stop_watch
+from segmenter_api.settings import get_settings
+
+settings = get_settings()
+
 class SAM2(Segmenter):
     @stop_watch
     def __init__(self):
-        self.predictor = SAM2ImagePredictor.from_pretrained("facebook/sam2-hiera-large")
+        checkpoint = str(settings.sam2_model_path / "sam2.1_hiera_large.pt")
+        model_cfg = str(settings.sam2_model_path / "sam2.1_hiera_l.yaml")
+        self.predictor = SAM2ImagePredictor(build_sam2(model_cfg, checkpoint))
 
     @stop_watch
     def bbox2segment(self, bbox2segment_input: Bbox2SegmentInput) -> Bbox2SegmentOutput:
