@@ -1,20 +1,36 @@
 from injector import inject
-from pydantic import BaseModel
+from PIL import Image
+from pydantic import BaseModel, ConfigDict
 
-from src.segmenter_api.domain.factory.detector_factory import DetectorFactoryInterface, DetectorType
-from src.segmenter_api.domain.factory.segmenter_factory import SegmenterFactoryInterface, SegmenterType
+from src.segmenter_api.domain.factory.detector_factory import (
+    DetectorFactoryInterface,
+    DetectorType,
+)
+from src.segmenter_api.domain.factory.segmenter_factory import (
+    SegmenterFactoryInterface,
+    SegmenterType,
+)
+
 
 class Text2SegmentInput(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
     texts: list[str]
+    image: Image.Image
     detector_type: DetectorType
     segmenter_type: SegmenterType
+
 
 class Text2SegmentOutput(BaseModel):
     segments: list[list[float]]
 
+
 class Text2SegmentUsecase:
     @inject
-    def __init__(self, segmenter_factory: SegmenterFactoryInterface, detector_factory: DetectorFactoryInterface):
+    def __init__(
+        self,
+        segmenter_factory: SegmenterFactoryInterface,
+        detector_factory: DetectorFactoryInterface,
+    ):
         self.segmenter_factory = segmenter_factory
         self.detector_factory = detector_factory
 

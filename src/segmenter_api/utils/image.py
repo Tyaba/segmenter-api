@@ -1,7 +1,7 @@
 import base64
 from io import BytesIO
 
-from PIL import Image
+from PIL import Image, ImageDraw
 
 from segmenter_api.utils.logger import get_logger
 
@@ -35,3 +35,12 @@ def pil2base64(image: Image.Image) -> str:
     buffered = BytesIO()
     image.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+
+def draw_bbox(
+    image: Image.Image, bbox: tuple[int, int, int, int], color: str = "green"
+) -> Image.Image:
+    image = image.copy()
+    draw = ImageDraw.Draw(image)
+    draw.rectangle(bbox, outline=color, width=2)
+    return image

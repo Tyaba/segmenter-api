@@ -2,8 +2,10 @@ from typing import Self, TypeVar
 
 from injector import Binder, Injector, Module, provider, singleton
 
-from segmenter_api.domain.factory.segmenter_factory import segmenterFactoryInterface
-from segmenter_api.infra.factory.segmenter_factory import segmenterFactory
+from segmenter_api.domain.factory.detector_factory import DetectorFactoryInterface
+from segmenter_api.domain.factory.segmenter_factory import SegmenterFactoryInterface
+from segmenter_api.infra.factory.detector_factory import DetectorFactory
+from segmenter_api.infra.factory.segmenter_factory import SegmenterFactory
 
 T = TypeVar("T")
 
@@ -35,5 +37,10 @@ class DI:
 class FactoryModule(Module):
     @provider
     @singleton
-    def provide_segmenter_factory(self) -> segmenterFactoryInterface:
-        return segmenterFactory()
+    def provide_segmenter_factory(self) -> SegmenterFactoryInterface:
+        return SegmenterFactory()
+
+    @provider
+    @singleton
+    def provide_detector_factory(self) -> DetectorFactoryInterface:
+        return DetectorFactory()
