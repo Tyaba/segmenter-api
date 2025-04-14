@@ -33,6 +33,7 @@ class SAM2(Segmenter):
         https://github.com/facebookresearch/sam2/issues/573
         """
         self.file_repository = file_repository
+        self._load_model()
 
     def _load_model(self):
         try:
