@@ -12,6 +12,7 @@ module "builder_service_account" {
   display_name = "segmenter-api-builder"
   description = "segmenter-apiのビルダーサービスアカウント"
   roles = [
+    "roles/cloudbuild.builds.builder",
     "roles/resourcemanager.projectIamAdmin",
     "roles/iam.serviceAccountUser",
     "roles/storage.objectUser",  # gcs backendの読み書きのため
@@ -19,7 +20,7 @@ module "builder_service_account" {
     "roles/logging.logWriter",
     "roles/run.admin",
     "roles/artifactregistry.admin",
-    ]
+  ]
 }
 
 module "cloud_run_service_account" {
