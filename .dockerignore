@@ -1,6 +1,6 @@
 .venv
 notebooks
 models
-.terraform
+**/.terraform
 data
 uv.lock
