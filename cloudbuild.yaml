@@ -1,7 +1,7 @@
 substitutions:
   _SERVICE_NAME: segmenter-api
   _GOOGLE_CLOUD_REGION: us-central1
-  _IMAGE_NAME: ${_GOOGLE_CLOUD_REGION}-docker.pkg.dev/${PROJECT_ID}/containers/${_SERVICE_NAME}
+  _IMAGE_NAME: ${_GOOGLE_CLOUD_REGION}-docker.pkg.dev/${PROJECT_ID}/${_SERVICE_NAME}/${_SERVICE_NAME}
   _ENV: dev
 
 steps:

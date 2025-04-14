@@ -58,7 +58,7 @@ module "segmenter_cloud_run" {
   service_name = var.service_name
   short_sha = var.short_sha
   region = var.region
-  image = "${var.region}-docker.pkg.dev/${var.project_id}/containers/${var.service_name}:latest"
+  image = "${var.region}-docker.pkg.dev/${var.project_id}/${var.service_name}/${var.service_name}:latest"
   num_gpus = 1
   accelerator = "nvidia-l4"
   min_instances = 0
