@@ -4,6 +4,7 @@ resource "google_cloud_run_v2_service" "service" {
   project  = var.project_id
   deletion_protection = false
   template {
+    service_account = var.service_account_email
     containers {
       image = var.image
       resources {

@@ -82,6 +82,11 @@ variable "port" {
   default     = 8080
 }
 
+variable "service_account_email" {
+  description = "サービスアカウントのメールアドレス"
+  type        = string
+}
+
 variable "short_sha" {
   description = "デプロイするコミットのSHA"
   type        = string

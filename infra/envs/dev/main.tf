@@ -21,6 +21,17 @@ module "builder_service_account" {
     ]
 }
 
+module "cloud_run_service_account" {
+  source = "../../modules/iam"
+  project_id = var.project_id
+  account_id = var.service_name
+  display_name = "segmenter-api-cloud-run"
+  description = "segmenter-apiのCloud Runサービスアカウント"
+  roles = [
+    "roles/storage.objectViewer",
+  ]
+}
+
 module "cloud_build_trigger" {
   source = "../../modules/cloud_build_trigger"
   project_id = var.project_id
@@ -53,5 +64,6 @@ module "segmenter_cloud_run" {
   memory = "32Gi"
   cpu = "8"
   startup_cpu_boost = false
+  service_account_email = module.cloud_run_service_account.email
   description = "segmenter APIのCloud Runサービス"
 }
