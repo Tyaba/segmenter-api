@@ -4,6 +4,7 @@ import numpy as np
 import torch
 from hydra import initialize_config_dir
 from hydra.core.global_hydra import GlobalHydra
+from injector import inject
 from PIL import Image
 from sam2.build_sam import build_sam2
 from sam2.sam2_image_predictor import SAM2ImagePredictor
@@ -24,6 +25,7 @@ settings = get_settings()
 
 
 class SAM2(Segmenter):
+    @inject
     @stop_watch
     def __init__(self, file_repository: FileRepositoryInterface):
         """Initialize SAM2 model.
