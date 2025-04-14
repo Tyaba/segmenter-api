@@ -1,13 +1,14 @@
 module "artifact_registry" {
   source = "../../modules/artifact_registry"
   location = var.region
+  repository_id = var.service_name
   description = "docker imagesが置かれるリポジトリ"
 }
 
 module "builder_service_account" {
   source = "../../modules/iam"
   project_id = var.project_id
-  account_id = var.service_name
+  account_id = "${var.service_name}-builder"
   display_name = "segmenter-api-builder"
   description = "segmenter-apiのビルダーサービスアカウント"
   roles = [
@@ -24,7 +25,7 @@ module "builder_service_account" {
 module "cloud_run_service_account" {
   source = "../../modules/iam"
   project_id = var.project_id
-  account_id = var.service_name
+  account_id = "${var.service_name}-cloud-run"
   display_name = "segmenter-api-cloud-run"
   description = "segmenter-apiのCloud Runサービスアカウント"
   roles = [

@@ -6,7 +6,6 @@ variable "location" {
 variable "repository_id" {
   description = "リポジトリのID"
   type        = string
-  default     = "containers"
 }
 
 variable "description" {
