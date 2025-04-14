@@ -21,6 +21,32 @@ depends = ["sync"]
 [tasks.download-stubs]
 run = "uv run mypy --install-types --non-interactive"
 
+[tasks.download-models]
+depends = ["download-florence2-model", "download-sam2-model"]
+
+[tasks.upload-models]
+depends = ["upload-florence2-model", "upload-sam2-model"]
+
+[tasks.download-florence2-model]
+run = """
+mkdir -p models/microsoft
+gcloud storage cp -r gs://${GOOGLE_CLOUD_STORAGE_BUCKET}/models/microsoft/Florence-2-large models/microsoft/
+"""
+[tasks.download-sam2-model]
+run = """
+mkdir -p models/facebook
+gcloud storage cp -r gs://${GOOGLE_CLOUD_STORAGE_BUCKET}/models/facebook/sam2.1-hiera-large models/facebook/
+"""
+
+[tasks.upload-florence2-model]
+run = """
+gcloud storage cp -r models/microsoft/Florence-2-large gs://${GOOGLE_CLOUD_STORAGE_BUCKET}/models/microsoft/
+"""
+[tasks.upload-sam2-model]
+run = """
+gcloud storage cp -r models/facebook/sam2.1-hiera-large gs://${GOOGLE_CLOUD_STORAGE_BUCKET}/models/facebook/
+"""
+
 [tasks.run]
 run = "uv run gunicorn -c src/segmenter_api/gunicorn.conf.py"
 depends = ["sync"]
@@ -35,7 +61,6 @@ gcloud builds submit . \
 SHORT_SHA=${SHORT_SHA},\
 _SERVICE_NAME=${SERVICE_NAME},\
 _GOOGLE_CLOUD_REGION=${GOOGLE_CLOUD_REGION}
-
 """
 [tools]
 python = "3.11.7"

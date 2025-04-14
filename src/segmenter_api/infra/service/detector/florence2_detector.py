@@ -1,33 +1,61 @@
+import traceback
+
 import torch
+from injector import inject
 from transformers.models.auto.modeling_auto import AutoModelForCausalLM
 from transformers.models.auto.processing_auto import AutoProcessor
-from pathlib import Path
+
+from segmenter_api.domain.repository.file import FileRepositoryInterface
 from segmenter_api.domain.service.detector import (
     Detector,
     Text2BboxInput,
     Text2BboxOutput,
 )
-from segmenter_api.utils.time import stop_watch
 from segmenter_api.settings import get_settings
+from segmenter_api.utils.logger import get_logger
+from segmenter_api.utils.time import stop_watch
+
+logger = get_logger(__name__)
 
 settings = get_settings()
 
+
 class Florence2Detector(Detector):
     @stop_watch
-    def __init__(self):
+    @inject
+    def __init__(self, file_repository: FileRepositoryInterface):
+        self.file_repository = file_repository
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         self.torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
-
-        self.model = AutoModelForCausalLM.from_pretrained(
-            settings.florence2_model_path,
-            torch_dtype=self.torch_dtype,
-            trust_remote_code=True,
-        ).to(self.device)
-        self.processor = AutoProcessor.from_pretrained(
-            settings.florence2_model_path,
-            trust_remote_code=True,
-        )
+        self.model, self.processor = self._load_model()
         self.task_prompt = "<OPEN_VOCABULARY_DETECTION>"
+
+    def _load_model(self) -> tuple[AutoModelForCausalLM, AutoProcessor]:
+        def _load_model_from_path(
+            path: str,
+        ) -> tuple[AutoModelForCausalLM, AutoProcessor]:
+            model = AutoModelForCausalLM.from_pretrained(
+                path,
+                torch_dtype=self.torch_dtype,
+                trust_remote_code=True,
+            ).to(self.device)
+            processor = AutoProcessor.from_pretrained(path, trust_remote_code=True)
+            return model, processor
+
+        local_model_path = settings.florence2_model_path
+        try:
+            # download local model from repository
+            self.file_repository.download_to_dir(
+                source_paths=[local_model_path],
+                destination_dir=local_model_path,
+            )
+            # load local model
+            return _load_model_from_path(str(local_model_path))
+        except Exception as e:
+            logger.warning(f"ローカルモデルのロードに失敗しました: {e}")
+            logger.warning(traceback.format_exc())
+            logger.warning("公開モデルのロードを試みます")
+            return _load_model_from_path("microsoft/Florence-2-large")
 
     @stop_watch
     def text2bbox(self, text2bbox_input: Text2BboxInput) -> Text2BboxOutput:
@@ -62,13 +90,18 @@ class Florence2Detector(Detector):
             )
             for generated_text in generated_texts
         ]
-
-        bboxes_dict: dict[str, list[float]] = {
-            parsed_answer["<OPEN_VOCABULARY_DETECTION>"]["bboxes_labels"][
-                0
-            ]: parsed_answer["<OPEN_VOCABULARY_DETECTION>"]["bboxes"][0]
-            for parsed_answer in parsed_answers
-        }
+        try:
+            bboxes_dict: dict[str, list[float]] = {
+                parsed_answer["<OPEN_VOCABULARY_DETECTION>"]["bboxes_labels"][
+                    0
+                ]: parsed_answer["<OPEN_VOCABULARY_DETECTION>"]["bboxes"][0]
+                for parsed_answer in parsed_answers
+            }
+        except IndexError as e:
+            logger.warning(e)
+            logger.warning(traceback.format_exc())
+            logger.warning(f"bboxが見つかりません: {text2bbox_input.texts}")
+            logger.warning(f"parsed_answers: {parsed_answers}")
+            return Text2BboxOutput(bboxes=[[]])
         bboxes = [bboxes_dict[text] for text in text2bbox_input.texts]
-
         return Text2BboxOutput(bboxes=bboxes)

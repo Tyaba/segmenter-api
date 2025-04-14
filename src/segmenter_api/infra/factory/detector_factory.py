@@ -13,7 +13,9 @@ from segmenter_api.infra.service.detector.florence2_detector import (
 class DetectorFactory(DetectorFactoryInterface):
     @lru_cache
     def create(self, detector_type: DetectorType) -> Detector:
+        from segmenter_api.di import resolve
+
         if detector_type == DetectorType.FLORENCE2:
-            return Florence2Detector()
+            return resolve(Florence2Detector)
         error_msg = f"Invalid detector type: {detector_type}"
         raise ValueError(error_msg)
