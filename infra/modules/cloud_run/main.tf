@@ -5,6 +5,7 @@ resource "google_cloud_run_v2_service" "service" {
   deletion_protection = false
   template {
     service_account = var.service_account_email
+    max_instance_request_concurrency = var.concurrency
     containers {
       image = var.image
       resources {

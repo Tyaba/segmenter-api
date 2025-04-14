@@ -55,7 +55,7 @@ variable "num_gpus" {
 variable "startup_cpu_boost" {
   description = "起動時のCPUブースト"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "accelerator" {
@@ -64,10 +64,16 @@ variable "accelerator" {
   default     = "nvidia-l4"
 }
 
+variable "concurrency" {
+  description = "並列実行数"
+  type        = number
+  default     = 1
+}
+
 variable "timeout_seconds" {
   description = "リクエストタイムアウト（秒）"
   type        = number
-  default     = 300
+  default     = 600
 }
 
 variable "env_vars" {
