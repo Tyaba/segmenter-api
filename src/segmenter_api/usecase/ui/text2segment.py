@@ -1,44 +1,12 @@
-from typing import Self
-
 from injector import inject
-from PIL import Image
-from pydantic import BaseModel, ConfigDict, field_serializer
 
-from segmenter_api.domain.factory.detector_factory import DetectorType
-from segmenter_api.domain.factory.segmenter_factory import SegmenterType
-from segmenter_api.usecase.service.text2segment import (
+from segmenter_api.domain.model.text2segment import (
     Text2SegmentInput,
-    Text2SegmentUsecase,
+    Text2SegmentRequest,
+    Text2SegmentResponse,
 )
-from segmenter_api.utils.image import base642pil, boolean2image, image2boolean
-
-
-class Text2SegmentRequest(BaseModel):
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-    detector_type: DetectorType
-    segmenter_type: SegmenterType
-    image: str
-    texts: list[str]
-
-    @field_serializer("detector_type")
-    def serialize_detector_type(self, detector_type: DetectorType) -> str:
-        return detector_type.value
-
-    @field_serializer("segmenter_type")
-    def serialize_segmenter_type(self, segmenter_type: SegmenterType) -> str:
-        return segmenter_type.value
-
-
-class Text2SegmentResponse(BaseModel):
-    masks: list[list[list[bool]]]
-
-    @classmethod
-    def from_images(cls, images: list[Image.Image]) -> Self:
-        return cls(masks=[image2boolean(image) for image in images])
-
-    @property
-    def mask_images(self) -> list[Image.Image]:
-        return [boolean2image(mask) for mask in self.masks]
+from segmenter_api.usecase.service.text2segment import Text2SegmentUsecase
+from segmenter_api.utils.image import base642pil
 
 
 class SegmenterUserInterface:
