@@ -6,7 +6,7 @@ resource "google_cloud_run_v2_service" "service" {
   template {
     service_account = var.service_account_email
     max_instance_request_concurrency = var.concurrency
-    timeout = var.timeout_seconds
+    timeout = "${var.timeout_seconds}s"
     containers {
       image = var.image
       resources {
