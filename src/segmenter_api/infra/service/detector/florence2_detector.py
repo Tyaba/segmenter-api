@@ -61,9 +61,10 @@ class Florence2Detector(Detector):
     def text2bbox(self, text2bbox_input: Text2BboxInput) -> Text2BboxOutput:
         prompts = [f"{self.task_prompt}{text}" for text in text2bbox_input.texts]
         # 前処理
+        image = text2bbox_input.image.convert("RGB")
         encoded = self.processor(
             text=prompts,
-            images=[text2bbox_input.image] * len(prompts),
+            images=[image] * len(prompts),
             return_tensors="pt",
         ).to(self.device, self.torch_dtype)
 
