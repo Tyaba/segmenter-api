@@ -1,15 +1,16 @@
+from typing import Self
+
 from injector import inject
 from PIL import Image
 from pydantic import BaseModel, ConfigDict, field_serializer
-from typing import Self
+
 from segmenter_api.domain.factory.detector_factory import DetectorType
 from segmenter_api.domain.factory.segmenter_factory import SegmenterType
 from segmenter_api.usecase.service.text2segment import (
     Text2SegmentInput,
-    Text2SegmentOutput,
     Text2SegmentUsecase,
 )
-from segmenter_api.utils.image import base642pil, image2boolean, boolean2image
+from segmenter_api.utils.image import base642pil, boolean2image, image2boolean
 
 
 class Text2SegmentRequest(BaseModel):
