@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Self
 
 from PIL import Image
 from pydantic import BaseModel, ConfigDict
@@ -14,12 +13,29 @@ class Bbox2SegmentInput(BaseModel):
     image: Image.Image
     bboxes: list[list[float]]
 
+
 class Bbox2SegmentOutput(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     masks: list[Image.Image]
 
 
+class ForegroundSegmentInput(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    image: Image.Image
+
+
+class ForegroundSegmentOutput(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    mask: Image.Image
+
+
 class Segmenter(ABC):
     @abstractmethod
     def bbox2segment(self, bbox2segment_input: Bbox2SegmentInput) -> Bbox2SegmentOutput:
+        raise NotImplementedError
+
+    @abstractmethod
+    def foreground_segment(
+        self, foreground_segment_input: ForegroundSegmentInput
+    ) -> ForegroundSegmentOutput:
         raise NotImplementedError

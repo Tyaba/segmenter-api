@@ -144,6 +144,9 @@ docstring-code-format = false
 docstring-code-line-length = "dynamic"
 
 [dependency-groups]
+birefnet = [
+    "kornia>=0.8.0",
+]
 sam2 = [
     "sam-2",
 ]

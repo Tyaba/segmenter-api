@@ -6,6 +6,7 @@ from segmenter_api.domain.service.segmenter import Segmenter
 
 class SegmenterType(Enum):
     SAM2 = "sam2"
+    BIREFNET = "birefnet"
 
 
 class SegmenterFactoryInterface(ABC):

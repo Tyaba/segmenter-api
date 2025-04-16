@@ -13,6 +13,8 @@ from segmenter_api.domain.repository.file import FileRepositoryInterface
 from segmenter_api.domain.service.segmenter import (
     Bbox2SegmentInput,
     Bbox2SegmentOutput,
+    ForegroundSegmentInput,
+    ForegroundSegmentOutput,
     Segmenter,
 )
 from segmenter_api.settings import get_settings
@@ -78,3 +80,9 @@ class SAM2(Segmenter):
             mask_image = Image.fromarray(mask)
             mask_images.append(mask_image)
         return Bbox2SegmentOutput(masks=mask_images)
+
+    def foreground_segment(
+        self, foreground_segment_input: ForegroundSegmentInput
+    ) -> ForegroundSegmentOutput:
+        error_msg = "SAM2は前景抽出に対応していません"
+        raise NotImplementedError(error_msg)
