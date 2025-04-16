@@ -150,4 +150,7 @@ birefnet = [
 sam2 = [
     "sam-2",
 ]
+yolo = [
+    "ultralytics>=8.3.109",
+]
 
