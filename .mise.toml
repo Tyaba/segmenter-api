@@ -14,8 +14,8 @@ run = "uv run ruff check . --fix"
 run = "uv run ruff format ."
 [tasks.vet]
 depends = ["lint", "format"]
-[tasks.test-with-cuda]
-run = "uv run python -m pytest tests -m cuda"
+[tasks.test]
+run = "uv run python -m pytest tests"
 depends = ["sync"]
 [tasks.test-without-cuda]
 run = "uv run python -m pytest tests -m 'not cuda'"
