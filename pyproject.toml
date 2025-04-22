@@ -147,10 +147,19 @@ docstring-code-line-length = "dynamic"
 birefnet = [
     "kornia>=0.8.0",
 ]
+dev = [
+    "httpx>=0.28.1",
+    "pytest-mock>=3.14.0",
+]
 sam2 = [
     "sam-2",
 ]
 yolo = [
     "ultralytics>=8.3.109",
+]
+
+[tool.pytest.ini_options]
+markers = [
+    "cuda: mark test as requiring CUDA"
 ]
 

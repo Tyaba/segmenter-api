@@ -29,6 +29,16 @@ steps:
         --cache-from ${_IMAGE_NAME}:latest \
         .
 
+  - id: "test"
+    name: "gcr.io/cloud-builders/docker"
+    waitFor: ["build"]
+    env:
+      - "DOCKER_BUILDKIT=1"
+    script: |
+      #!/usr/bin/env bash
+      set -eu
+      docker run --rm ${_IMAGE_NAME}:${SHORT_SHA} uv run python -m pytest tests -m 'not cuda'
+
   # chisatoのtag&push
   - id: "push"
     name: "gcr.io/cloud-builders/docker"
