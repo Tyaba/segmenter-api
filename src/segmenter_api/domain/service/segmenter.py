@@ -11,7 +11,7 @@ logger = get_logger(__name__)
 class Bbox2SegmentInput(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     image: Image.Image
-    bboxes: list[list[float]]
+    bboxes: list[tuple[float, float, float, float]]
 
 
 class Bbox2SegmentOutput(BaseModel):

@@ -30,7 +30,7 @@ depends = ["upload-florence2-model", "upload-sam2-model"]
 [tasks.download-florence2-model]
 run = """
 mkdir -p models/microsoft
-gcloud storage cp -r gs://${GOOGLE_CLOUD_STORAGE_BUCKET}/models/microsoft/Florence-2-large models/microsoft/
+gcloud storage cp -r gs://${GOOGLE_CLOUD_STORAGE_BUCKET}/models/microsoft/Florence-2-base models/microsoft/
 """
 [tasks.download-sam2-model]
 run = """
@@ -40,7 +40,7 @@ gcloud storage cp -r gs://${GOOGLE_CLOUD_STORAGE_BUCKET}/models/facebook/sam2.1-
 
 [tasks.upload-florence2-model]
 run = """
-gcloud storage cp -r models/microsoft/Florence-2-large gs://${GOOGLE_CLOUD_STORAGE_BUCKET}/models/microsoft/
+gcloud storage cp -r models/microsoft/Florence-2-base gs://${GOOGLE_CLOUD_STORAGE_BUCKET}/models/microsoft/
 """
 [tasks.upload-sam2-model]
 run = """

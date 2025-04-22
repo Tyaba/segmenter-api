@@ -1,10 +1,11 @@
 """uv run python src/segmenter_api/usecase/service/text2segment.py \
 --text "plastic bottle" \
 --image-path tests/data/abema_water.png \
---output-image-path data/abema_water_segmented.png
+--output-image-dir data/abema_water_segmented
 """
 
 from argparse import ArgumentParser, Namespace
+from pathlib import Path
 
 from injector import inject
 from PIL import Image
@@ -46,15 +47,21 @@ class Text2SegmentUsecase:
                 image=text2segment_input.image,
             )
         )
+        bboxes_list: list[tuple[float, float, float, float]] = []
+        labels: list[str] = []
+        for label, bboxes in text2bbox_output.bboxes.items():
+            labels += [label] * len(bboxes)
+            bboxes_list += bboxes
         bbox2segment_output: Bbox2SegmentOutput = segmenter.bbox2segment(
             bbox2segment_input=Bbox2SegmentInput(
                 image=text2segment_input.image,
-                bboxes=text2bbox_output.bboxes,
+                bboxes=bboxes_list,
             )
         )
         masks = bbox2segment_output.masks
         return Text2SegmentOutput(
             masks=masks,
+            labels=labels,
             text2bbox_output=text2bbox_output,
             bbox2segment_output=bbox2segment_output,
         )
@@ -72,13 +79,17 @@ def main(args: Namespace) -> None:
             segmenter_type=SegmenterType.SAM2,
         )
     )
-    output.masks[0].save(args.output_image_path)
+    args.output_image_dir.mkdir(parents=True, exist_ok=True)
+    for i, (mask, label) in enumerate(zip(output.masks, output.labels, strict=True)):
+        cropped = input_image.copy().convert("RGBA")
+        cropped.putalpha(mask)
+        cropped.save(args.output_image_dir / f"{i}_{label}.png")
 
 
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--text", type=str, required=True)
-    parser.add_argument("--image-path", type=str, required=True)
-    parser.add_argument("--output-image-path", type=str, required=True)
+    parser.add_argument("--image-path", type=Path, required=True)
+    parser.add_argument("--output-image-dir", type=Path, required=True)
     args = parser.parse_args()
     main(args)

@@ -11,7 +11,7 @@ class Text2BboxInput(BaseModel):
 
 
 class Text2BboxOutput(BaseModel):
-    bboxes: list[list[float]]
+    bboxes: dict[str, list[tuple[float, float, float, float]]]
 
 
 class Detector(ABC):

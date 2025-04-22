@@ -2,6 +2,7 @@ import traceback
 
 import torch
 from injector import inject
+from PIL import Image
 from transformers.models.auto.modeling_auto import AutoModelForCausalLM
 from transformers.models.auto.processing_auto import AutoProcessor
 
@@ -55,16 +56,25 @@ class Florence2Detector(Detector):
             logger.warning(f"ローカルモデルのロードに失敗しました: {e}")
             logger.warning(traceback.format_exc())
             logger.warning("公開モデルのロードを試みます")
-            return _load_model_from_path("microsoft/Florence-2-large")
+            return _load_model_from_path("microsoft/Florence-2-base")
 
     @stop_watch
     def text2bbox(self, text2bbox_input: Text2BboxInput) -> Text2BboxOutput:
-        prompts = [f"{self.task_prompt}{text}" for text in text2bbox_input.texts]
         # 前処理
         image = text2bbox_input.image.convert("RGB")
+        bboxes_dict: dict[str, list[tuple[float, float, float, float]]] = {
+            text: self._text2bbox(text=text, image=image)
+            for text in text2bbox_input.texts
+        }
+        return Text2BboxOutput(bboxes=bboxes_dict)
+
+    def _text2bbox(
+        self, text: str, image: Image.Image
+    ) -> list[tuple[float, float, float, float]]:
+        prompt = f"{self.task_prompt}{text}"
         encoded = self.processor(
-            text=prompts,
-            images=[image] * len(prompts),
+            text=prompt,
+            images=image,
             return_tensors="pt",
         ).to(self.device, self.torch_dtype)
 
@@ -72,37 +82,23 @@ class Florence2Detector(Detector):
         generated_ids = self.model.generate(
             input_ids=encoded["input_ids"],
             pixel_values=encoded["pixel_values"],
-            max_new_tokens=4096,
+            # max_new_tokens=4096,
+            max_new_tokens=1024,
             num_beams=3,
-            do_sample=False,
+            # do_sample=False,
         )
 
         # decode
-        generated_texts = self.processor.batch_decode(
+        generated_text = self.processor.batch_decode(
             generated_ids, skip_special_tokens=False
-        )
+        )[0]
 
         # 後処理
-        parsed_answers = [
-            self.processor.post_process_generation(
-                generated_text,
-                task=self.task_prompt,
-                image_size=(text2bbox_input.image.width, text2bbox_input.image.height),
-            )
-            for generated_text in generated_texts
-        ]
-        try:
-            bboxes_dict: dict[str, list[float]] = {
-                parsed_answer["<OPEN_VOCABULARY_DETECTION>"]["bboxes_labels"][
-                    0
-                ]: parsed_answer["<OPEN_VOCABULARY_DETECTION>"]["bboxes"][0]
-                for parsed_answer in parsed_answers
-            }
-        except IndexError as e:
-            logger.warning(e)
-            logger.warning(traceback.format_exc())
-            logger.warning(f"bboxが見つかりません: {text2bbox_input.texts}")
-            logger.warning(f"parsed_answers: {parsed_answers}")
-            return Text2BboxOutput(bboxes=[[]])
-        bboxes = [bboxes_dict[text] for text in text2bbox_input.texts]
-        return Text2BboxOutput(bboxes=bboxes)
+        parsed_answer = self.processor.post_process_generation(
+            generated_text,
+            task=self.task_prompt,
+            image_size=image.size,
+        )
+        bboxes = parsed_answer["<OPEN_VOCABULARY_DETECTION>"]["bboxes"]
+        bboxes_tuple = [tuple(bbox) for bbox in bboxes]
+        return bboxes_tuple
