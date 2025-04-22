@@ -70,8 +70,8 @@ class Text2SegmentResponse(BaseModel):
         return self
 
     @property
-    def mask_images(self) -> dict[str, list[Image.Image]]:
-        return {
-            label: [boolean2image(bool_list=mask)]
+    def mask_images(self) -> list[tuple[str, Image.Image]]:
+        return [
+            (label, boolean2image(bool_list=mask))
             for label, mask in zip(self.labels, self.masks, strict=True)
-        }
+        ]
