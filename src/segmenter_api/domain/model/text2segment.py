@@ -1,7 +1,12 @@
 from typing import Self
 
 from PIL import Image
-from pydantic import BaseModel, ConfigDict, field_serializer, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    field_serializer,
+    model_validator,
+)
 
 from segmenter_api.domain.factory.detector_factory import DetectorType
 from segmenter_api.domain.factory.segmenter_factory import SegmenterType
@@ -54,8 +59,19 @@ class Text2SegmentRequest(BaseModel):
 
 class Text2SegmentResponse(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
+    labels: list[str]
     masks: list[list[list[bool]]]
 
+    @model_validator(mode="after")
+    def check_masks_and_labels(self) -> Self:
+        if len(self.masks) != len(self.labels):
+            error_msg = "masksとlabelsの長さが一致しません"
+            raise ValueError(error_msg)
+        return self
+
     @property
-    def mask_images(self) -> list[Image.Image]:
-        return [boolean2image(bool_list=mask) for mask in self.masks]
+    def mask_images(self) -> dict[str, list[Image.Image]]:
+        return {
+            label: [boolean2image(bool_list=mask)]
+            for label, mask in zip(self.labels, self.masks, strict=True)
+        }

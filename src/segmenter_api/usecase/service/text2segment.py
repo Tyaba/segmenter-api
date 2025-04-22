@@ -47,21 +47,16 @@ class Text2SegmentUsecase:
                 image=text2segment_input.image,
             )
         )
-        bboxes_list: list[tuple[float, float, float, float]] = []
-        labels: list[str] = []
-        for label, bboxes in text2bbox_output.bboxes.items():
-            labels += [label] * len(bboxes)
-            bboxes_list += bboxes
         bbox2segment_output: Bbox2SegmentOutput = segmenter.bbox2segment(
             bbox2segment_input=Bbox2SegmentInput(
                 image=text2segment_input.image,
-                bboxes=bboxes_list,
+                bboxes=text2bbox_output.bboxes,
             )
         )
         masks = bbox2segment_output.masks
         return Text2SegmentOutput(
             masks=masks,
-            labels=labels,
+            labels=text2bbox_output.labels,
             text2bbox_output=text2bbox_output,
             bbox2segment_output=bbox2segment_output,
         )

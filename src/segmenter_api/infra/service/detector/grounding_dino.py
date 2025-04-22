@@ -36,5 +36,9 @@ class GroundingDinoDetector(Detector):
         )
 
         result = results[0]
+        labels = result["labels"]
         bboxes = result["boxes"].tolist()
-        return Text2BboxOutput(bboxes=bboxes)
+        return Text2BboxOutput(
+            labels=labels,
+            bboxes=bboxes,
+        )

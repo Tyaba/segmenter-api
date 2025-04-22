@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
+from typing import Self
 
 from PIL import Image
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 
 
 class Text2BboxInput(BaseModel):
@@ -11,7 +12,15 @@ class Text2BboxInput(BaseModel):
 
 
 class Text2BboxOutput(BaseModel):
-    bboxes: dict[str, list[tuple[float, float, float, float]]]
+    labels: list[str]
+    bboxes: list[tuple[float, float, float, float]]
+
+    @model_validator(mode="after")
+    def check_labels_and_bboxes(self) -> Self:
+        if len(self.labels) != len(self.bboxes):
+            error_msg = "labelsとbboxesの長さが一致しません"
+            raise ValueError(error_msg)
+        return self
 
 
 class Detector(ABC):

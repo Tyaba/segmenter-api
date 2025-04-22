@@ -27,5 +27,6 @@ class Text2SegmentUserInterface:
             text2segment_input=usecase_input,
         )
         return Text2SegmentResponse(
-            masks=[image2boolean(image=mask) for mask in usecase_output.masks]
+            labels=usecase_output.labels,
+            masks=[image2boolean(image=mask) for mask in usecase_output.masks],
         )

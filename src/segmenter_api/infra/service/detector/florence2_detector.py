@@ -62,11 +62,13 @@ class Florence2Detector(Detector):
     def text2bbox(self, text2bbox_input: Text2BboxInput) -> Text2BboxOutput:
         # 前処理
         image = text2bbox_input.image.convert("RGB")
-        bboxes_dict: dict[str, list[tuple[float, float, float, float]]] = {
-            text: self._text2bbox(text=text, image=image)
-            for text in text2bbox_input.texts
-        }
-        return Text2BboxOutput(bboxes=bboxes_dict)
+        labels: list[str] = []
+        bboxes: list[tuple[float, float, float, float]] = []
+        for text in text2bbox_input.texts:
+            _bboxes = self._text2bbox(text=text, image=image)
+            labels += [text] * len(_bboxes)
+            bboxes += _bboxes
+        return Text2BboxOutput(labels=labels, bboxes=bboxes)
 
     def _text2bbox(
         self, text: str, image: Image.Image
