@@ -61,11 +61,15 @@ class Text2SegmentResponse(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     labels: list[str]
     masks: list[str]
+    bboxes: list[list[float]]
 
     @model_validator(mode="after")
-    def check_masks_and_labels(self) -> Self:
+    def check_masks_and_labels_and_bboxes(self) -> Self:
         if len(self.masks) != len(self.labels):
             error_msg = "masksとlabelsの長さが一致しません"
+            raise ValueError(error_msg)
+        if len(self.masks) != len(self.bboxes):
+            error_msg = "masksとbboxesの長さが一致しません"
             raise ValueError(error_msg)
         return self
 
