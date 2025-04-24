@@ -1,4 +1,5 @@
 import traceback
+from typing import Literal
 
 import torch
 from injector import inject
@@ -24,14 +25,20 @@ settings = get_settings()
 class Florence2Detector(Detector):
     @stop_watch
     @inject
-    def __init__(self, file_repository: FileRepositoryInterface):
+    def __init__(
+        self,
+        file_repository: FileRepositoryInterface,
+        model_type: Literal["base", "large"],
+    ):
         self.file_repository = file_repository
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         self.torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
-        self.model, self.processor = self._load_model()
+        self.model, self.processor = self._load_model(model_type)
         self.task_prompt = "<OPEN_VOCABULARY_DETECTION>"
 
-    def _load_model(self) -> tuple[AutoModelForCausalLM, AutoProcessor]:
+    def _load_model(
+        self, model_type: Literal["base", "large"]
+    ) -> tuple[AutoModelForCausalLM, AutoProcessor]:
         def _load_model_from_path(
             path: str,
         ) -> tuple[AutoModelForCausalLM, AutoProcessor]:
@@ -43,7 +50,14 @@ class Florence2Detector(Detector):
             processor = AutoProcessor.from_pretrained(path, trust_remote_code=True)
             return model, processor
 
-        local_model_path = settings.florence2_model_path
+        match model_type:
+            case "base":
+                local_model_path = settings.florence2_base_model_path
+            case "large":
+                local_model_path = settings.florence2_large_model_path
+            case _:
+                error_msg = f"Invalid model_type: {model_type}"
+                raise ValueError(error_msg)
         try:
             # download local model from repository
             self.file_repository.download_to_dir(
@@ -56,7 +70,7 @@ class Florence2Detector(Detector):
             logger.warning(f"ローカルモデルのロードに失敗しました: {e}")
             logger.warning(traceback.format_exc())
             logger.warning("公開モデルのロードを試みます")
-            return _load_model_from_path("microsoft/Florence-2-base")
+            return _load_model_from_path(f"microsoft/Florence-2-{model_type}")
 
     @stop_watch
     def text2bbox(self, text2bbox_input: Text2BboxInput) -> Text2BboxOutput:

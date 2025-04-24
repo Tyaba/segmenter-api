@@ -27,7 +27,7 @@ def cloud_run_url():
 def create_text2segment_request(
     texts: list[str],
     image: Image.Image,
-    detector_type: DetectorType = DetectorType.FLORENCE2,
+    detector_type: DetectorType = DetectorType.FLORENCE2_BASE,
     segmenter_type: SegmenterType = SegmenterType.SAM2,
 ) -> Text2SegmentRequest:
     return Text2SegmentRequest(

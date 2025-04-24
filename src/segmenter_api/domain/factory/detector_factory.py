@@ -5,7 +5,8 @@ from segmenter_api.domain.service.detector import Detector
 
 
 class DetectorType(Enum):
-    FLORENCE2 = "florence2"
+    FLORENCE2_BASE = "florence2_base"
+    FLORENCE2_LARGE = "florence2_large"
     GROUNDING_DINO = "grounding_dino"
 
 

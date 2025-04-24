@@ -29,7 +29,7 @@ def test_text2segment(
     input_data = Text2SegmentInput(
         texts=texts,
         image=input_image,
-        detector_type=DetectorType.FLORENCE2,
+        detector_type=DetectorType.FLORENCE2_BASE,
         segmenter_type=SegmenterType.SAM2,
     )
 
@@ -42,7 +42,7 @@ def test_text2segment(
     assert len(output.bbox2segment_output.masks) == 1
 
     # モックの呼び出し確認
-    mock_detector_factory.create.assert_called_once_with(DetectorType.FLORENCE2)
+    mock_detector_factory.create.assert_called_once_with(DetectorType.FLORENCE2_BASE)
     mock_segmenter_factory.create.assert_called_once_with(SegmenterType.SAM2)
     mock_detector_factory.create.return_value.text2bbox.assert_called_once()
     mock_segmenter_factory.create.return_value.bbox2segment.assert_called_once()

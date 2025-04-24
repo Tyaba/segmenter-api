@@ -70,7 +70,7 @@ def main(args: Namespace) -> None:
         Text2SegmentInput(
             texts=[args.text],
             image=input_image,
-            detector_type=DetectorType.FLORENCE2,
+            detector_type=DetectorType.FLORENCE2_BASE,
             segmenter_type=SegmenterType.SAM2,
         )
     )
