@@ -37,7 +37,7 @@ steps:
     script: |
       #!/usr/bin/env bash
       set -eu
-      docker run --rm ${_IMAGE_NAME}:${SHORT_SHA} uv run python -m pytest tests -m 'not cuda'
+      docker run --rm ${_IMAGE_NAME}:${SHORT_SHA} uv run python -m pytest tests -m 'not cuda and not cloudrun'
 
   # chisatoのtag&push
   - id: "push"

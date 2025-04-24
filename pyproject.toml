@@ -80,52 +80,52 @@ indent-width = 4
 target-version = "py310"
 
 [tool.ruff.lint]
-select = [  # https://beta.ruff.rs/docs/rules
-    "A",      # flake8-builtins
-    "ARG",    # flake8-unused-arguments
-    "ASYNC",  # flake8-async
-    "B",      # flake8-bugbear
-    "BLE",    # flake8-blind-except
-    "C4",     # flake8-comprehensions
-    "C90",    # McCabe cyclomatic complexity
-    "DJ",     # flake8-django
-    "DTZ",    # flake8-datetimez
-    "E",      # pycodestyle
-    "EM",     # flake8-errmsg
-    "EXE",    # flake8-executable
-    "F",      # Pyflakes
-    "FA",     # flake8-future-annotations
-    "FLY",    # flynt
-    "G",      # flake8-logging-format
-    "I",      # isort
-    "ICN",    # flake8-import-conventions
-    "INP",    # flake8-no-pep420
-    "INT",    # flake8-gettext
-    "N",      # pep8-naming
-    "NPY",    # NumPy-specific rules
-    "PD",     # pandas-vet
-    "PGH",    # pygrep-hooks
-    "PIE",    # flake8-pie
-    "PL",     # Pylint
-    "PT",     # flake8-pytest-style
-    "PYI",    # flake8-pyi
-    "RSE",    # flake8-raise
-    "RUF",    # Ruff-specific rules
-    "S",      # flake8-bandit
-    "SIM",    # flake8-simplify
-    "SLF",    # flake8-self
-    "T10",    # flake8-debugger
-    "TD",     # flake8-todos
-    "TID",    # flake8-tidy-imports
-    "UP",     # pyupgrade
-    "W",      # pycodestyle
-    "YTT",    # flake8-2020
+select = [ # https://beta.ruff.rs/docs/rules
+    "A",     # flake8-builtins
+    "ARG",   # flake8-unused-arguments
+    "ASYNC", # flake8-async
+    "B",     # flake8-bugbear
+    "BLE",   # flake8-blind-except
+    "C4",    # flake8-comprehensions
+    "C90",   # McCabe cyclomatic complexity
+    "DJ",    # flake8-django
+    "DTZ",   # flake8-datetimez
+    "E",     # pycodestyle
+    "EM",    # flake8-errmsg
+    "EXE",   # flake8-executable
+    "F",     # Pyflakes
+    "FA",    # flake8-future-annotations
+    "FLY",   # flynt
+    "G",     # flake8-logging-format
+    "I",     # isort
+    "ICN",   # flake8-import-conventions
+    "INP",   # flake8-no-pep420
+    "INT",   # flake8-gettext
+    "N",     # pep8-naming
+    "NPY",   # NumPy-specific rules
+    "PD",    # pandas-vet
+    "PGH",   # pygrep-hooks
+    "PIE",   # flake8-pie
+    "PL",    # Pylint
+    "PT",    # flake8-pytest-style
+    "PYI",   # flake8-pyi
+    "RSE",   # flake8-raise
+    "RUF",   # Ruff-specific rules
+    "S",     # flake8-bandit
+    "SIM",   # flake8-simplify
+    "SLF",   # flake8-self
+    "T10",   # flake8-debugger
+    "TD",    # flake8-todos
+    "TID",   # flake8-tidy-imports
+    "UP",    # pyupgrade
+    "W",     # pycodestyle
+    "YTT",   # flake8-2020
 ]
 ignore = [
-    "G004",     # Logging statement uses f-string
-    "S101",     # Use of assert
-    "E203",     # Whitespace before ':'
-    "B008",     # Do not perform function calls in argument defaults
+    "G004", # Logging statement uses f-string
+    "S101", # Use of assert
+    "E203", # Whitespace before ':'
+    "B008", # Do not perform function calls in argument defaults
 ]
 fixable = ["ALL"]
 unfixable = []
@@ -144,22 +144,13 @@ docstring-code-format = false
 docstring-code-line-length = "dynamic"
 
 [dependency-groups]
-birefnet = [
-    "kornia>=0.8.0",
-]
-dev = [
-    "httpx>=0.28.1",
-    "pytest-mock>=3.14.0",
-]
-sam2 = [
-    "sam-2",
-]
-yolo = [
-    "ultralytics>=8.3.109",
-]
+birefnet = ["kornia>=0.8.0"]
+dev = ["httpx>=0.28.1", "pytest-mock>=3.14.0"]
+sam2 = ["sam-2"]
+yolo = ["ultralytics>=8.3.109"]
 
 [tool.pytest.ini_options]
 markers = [
-    "cuda: mark test as requiring CUDA"
+    "cuda: mark test as requiring CUDA",
+    "cloudrun: mark test as requiring Cloud Run endpoint",
 ]
-
