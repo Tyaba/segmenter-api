@@ -1,6 +1,6 @@
 substitutions:
   _SERVICE_NAME: segmenter-api
-  _GOOGLE_CLOUD_REGION: us-central1
+  _GOOGLE_CLOUD_REGION: asia-southeast1
   _IMAGE_NAME: ${_GOOGLE_CLOUD_REGION}-docker.pkg.dev/${PROJECT_ID}/${_SERVICE_NAME}/${_SERVICE_NAME}
   _ENV: dev
 
@@ -34,6 +34,7 @@ steps:
     waitFor: ["build"]
     env:
       - "DOCKER_BUILDKIT=1"
+      - "CLOUD_RUN_URL=https://${_SERVICE_NAME}-${PROJECT_NUMBER}.${_GOOGLE_CLOUD_REGION}.run.app"
     script: |
       #!/usr/bin/env bash
       set -eu
