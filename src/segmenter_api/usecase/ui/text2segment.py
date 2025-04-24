@@ -7,6 +7,7 @@ from segmenter_api.domain.model.text2segment import (
 )
 from segmenter_api.usecase.service.text2segment import Text2SegmentUsecase
 from segmenter_api.utils.image import base642pil, image2boolean
+from segmenter_api.utils.time import stop_watch
 
 
 class Text2SegmentUserInterface:
@@ -14,6 +15,7 @@ class Text2SegmentUserInterface:
     def __init__(self, text2segment_usecase: Text2SegmentUsecase):
         self.text2segment_usecase = text2segment_usecase
 
+    @stop_watch
     def text2segment(
         self, text2segment_request: Text2SegmentRequest
     ) -> Text2SegmentResponse:

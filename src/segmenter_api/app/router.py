@@ -13,8 +13,10 @@ from segmenter_api.usecase.ui.text2segment import (
     Text2SegmentResponse,
     Text2SegmentUserInterface,
 )
+from segmenter_api.utils.logger import get_logger
 
 router = APIRouter()
+logger = get_logger(__name__)
 
 
 @router.post("/text2segment", response_model=Text2SegmentResponse)

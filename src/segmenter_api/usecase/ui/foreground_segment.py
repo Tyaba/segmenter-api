@@ -9,6 +9,7 @@ from segmenter_api.usecase.service.foreground_segment import (
     ForegroundSegmentUsecase,
 )
 from segmenter_api.utils.image import base642pil, image2boolean
+from segmenter_api.utils.time import stop_watch
 
 
 class ForegroundSegmentUserInterface:
@@ -16,6 +17,7 @@ class ForegroundSegmentUserInterface:
     def __init__(self, foreground_segment_usecase: ForegroundSegmentUsecase):
         self.foreground_segment_usecase = foreground_segment_usecase
 
+    @stop_watch
     def foreground_segment(
         self, foreground_segment_request: ForegroundSegmentRequest
     ) -> ForegroundSegmentResponse:
