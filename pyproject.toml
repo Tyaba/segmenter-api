@@ -1,13 +1,13 @@
 [project]
 name = "segmenter-api"
-version = "0.1.0"
+version = "1.0.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "einops>=0.8.1",
     "fastapi>=0.115.12",
-    "google-cloud-storage>=3.1.0",
+    "google-cloud-storage>=2.18.2",
     "gunicorn>=23.0.0",
     "injector>=0.22.0",
     "ipykernel>=6.29.5",

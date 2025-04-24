@@ -8,7 +8,7 @@ from segmenter_api.domain.model.foreground_segment import (
 from segmenter_api.usecase.service.foreground_segment import (
     ForegroundSegmentUsecase,
 )
-from segmenter_api.utils.image import base642pil, image2boolean
+from segmenter_api.utils.image import base642pil, pil2base64
 from segmenter_api.utils.time import stop_watch
 
 
@@ -28,5 +28,5 @@ class ForegroundSegmentUserInterface:
         usecase_output = self.foreground_segment_usecase.foreground_segment(
             foreground_segment_usecase_input=usecase_input,
         )
-        mask_array = image2boolean(usecase_output.mask)
+        mask_array = pil2base64(usecase_output.mask)
         return ForegroundSegmentResponse(mask=mask_array)

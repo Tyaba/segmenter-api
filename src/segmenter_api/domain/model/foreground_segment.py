@@ -2,7 +2,7 @@ from PIL import Image
 from pydantic import BaseModel, ConfigDict, field_serializer
 
 from segmenter_api.domain.factory.segmenter_factory import SegmenterType
-from segmenter_api.utils.image import boolean2image
+from segmenter_api.utils.image import base642pil
 
 
 class ForegroundSegmentUsecaseInput(BaseModel):
@@ -28,8 +28,8 @@ class ForegroundSegmentRequest(BaseModel):
 
 class ForegroundSegmentResponse(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    mask: list[list[bool]]
+    mask: str
 
     @property
     def mask_image(self) -> Image.Image:
-        return boolean2image(bool_list=self.mask)
+        return base642pil(self.mask)

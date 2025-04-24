@@ -6,7 +6,7 @@ from segmenter_api.domain.model.text2segment import (
     Text2SegmentResponse,
 )
 from segmenter_api.usecase.service.text2segment import Text2SegmentUsecase
-from segmenter_api.utils.image import base642pil, image2boolean
+from segmenter_api.utils.image import base642pil, pil2base64
 from segmenter_api.utils.time import stop_watch
 
 
@@ -30,5 +30,5 @@ class Text2SegmentUserInterface:
         )
         return Text2SegmentResponse(
             labels=usecase_output.labels,
-            masks=[image2boolean(image=mask) for mask in usecase_output.masks],
+            masks=[pil2base64(image=mask) for mask in usecase_output.masks],
         )

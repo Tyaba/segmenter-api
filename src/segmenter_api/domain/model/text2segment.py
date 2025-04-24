@@ -12,7 +12,7 @@ from segmenter_api.domain.factory.detector_factory import DetectorType
 from segmenter_api.domain.factory.segmenter_factory import SegmenterType
 from segmenter_api.domain.service.detector import Text2BboxOutput
 from segmenter_api.domain.service.segmenter import Bbox2SegmentOutput
-from segmenter_api.utils.image import boolean2image
+from segmenter_api.utils.image import base642pil
 
 
 class Text2SegmentInput(BaseModel):
@@ -60,7 +60,7 @@ class Text2SegmentRequest(BaseModel):
 class Text2SegmentResponse(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     labels: list[str]
-    masks: list[list[list[bool]]]
+    masks: list[str]
 
     @model_validator(mode="after")
     def check_masks_and_labels(self) -> Self:
@@ -72,6 +72,6 @@ class Text2SegmentResponse(BaseModel):
     @property
     def mask_images(self) -> list[tuple[str, Image.Image]]:
         return [
-            (label, boolean2image(bool_list=mask))
+            (label, base642pil(mask))
             for label, mask in zip(self.labels, self.masks, strict=True)
         ]
