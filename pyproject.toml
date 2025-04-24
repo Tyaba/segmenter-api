@@ -5,21 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "einops>=0.8.1",
-    "fastapi>=0.115.12",
-    "google-cloud-storage>=2.18.2",
-    "gunicorn>=23.0.0",
     "injector>=0.22.0",
-    "ipykernel>=6.29.5",
     "pillow>=11.1.0",
-    "protobuf>=6.30.2",
     "pydantic>=2.8.2",
     "pydantic-settings>=2.8.1",
-    "tenacity>=9.1.2",
-    "timm>=1.0.15",
-    "torch>=2.6.0",
-    "transformers>=4.51.2",
-    "uvicorn[standard]>=0.34.0",
 ]
 
 [tool.uv]
@@ -147,6 +136,18 @@ docstring-code-line-length = "dynamic"
 birefnet = ["kornia>=0.8.0"]
 dev = ["httpx>=0.28.1", "pytest-mock>=3.14.0"]
 sam2 = ["sam-2"]
+server = [
+    "einops>=0.8.1",
+    "fastapi>=0.115.12",
+    "google-cloud-storage>=3.1.0",
+    "gunicorn>=23.0.0",
+    "protobuf>=6.30.2",
+    "tenacity>=9.1.2",
+    "timm>=1.0.15",
+    "torch>=2.6.0",
+    "transformers>=4.51.2",
+    "uvicorn[standard]>=0.34.0",
+]
 yolo = ["ultralytics>=8.3.109"]
 
 [tool.pytest.ini_options]
