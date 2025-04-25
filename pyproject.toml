@@ -9,6 +9,7 @@ dependencies = [
     "pillow>=11.1.0",
     "pydantic>=2.8.2",
     "pydantic-settings>=2.8.1",
+    "tqdm<=4.66.1",
 ]
 
 [tool.uv]
