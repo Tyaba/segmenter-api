@@ -44,22 +44,59 @@ class Text2SegmentUsecase:
         text2bbox_output: Text2BboxOutput = detector.text2bbox(
             text2bbox_input=Text2BboxInput(
                 texts=text2segment_input.texts,
-                image=text2segment_input.image,
+                image=text2segment_input.image.convert("RGB"),
             )
+        )
+        if len(text2bbox_output.bboxes) == 0:
+            return Text2SegmentOutput(
+                masks=[],
+                labels=[],
+                text2bbox_output=text2bbox_output,
+                bbox2segment_output=Bbox2SegmentOutput(masks=[]),
+            )
+        assert_bboxes_in_image(
+            bboxes=text2bbox_output.bboxes,
+            image_size=text2segment_input.image.size,
         )
         bbox2segment_output: Bbox2SegmentOutput = segmenter.bbox2segment(
             bbox2segment_input=Bbox2SegmentInput(
-                image=text2segment_input.image,
+                image=text2segment_input.image.convert("RGB"),
                 bboxes=text2bbox_output.bboxes,
             )
         )
         masks = bbox2segment_output.masks
+        assert_mask_size_is_image_size(
+            masks=masks,
+            image_size=text2segment_input.image.size,
+        )
         return Text2SegmentOutput(
             masks=masks,
             labels=text2bbox_output.labels,
             text2bbox_output=text2bbox_output,
             bbox2segment_output=bbox2segment_output,
         )
+
+
+def assert_bboxes_in_image(
+    bboxes: list[tuple[float, float, float, float]], image_size: tuple[int, int]
+) -> None:
+    assert all(
+        bbox[2] < image_size[0] and bbox[3] < image_size[1] for bbox in bboxes
+    ), (
+        "bboxの座標がinput_imageのサイズを超えています。"
+        f"input_image: {image_size}, "
+        f"bboxes: {bboxes}"
+    )
+
+
+def assert_mask_size_is_image_size(
+    masks: list[Image.Image], image_size: tuple[int, int]
+) -> None:
+    assert all(mask.size == image_size for mask in masks), (
+        "maskのサイズがinput_imageのサイズと一致しません。"
+        f"input_image: {image_size}, "
+        f"masks: {[mask.size for mask in masks]}"
+    )
 
 
 def main(args: Namespace) -> None:

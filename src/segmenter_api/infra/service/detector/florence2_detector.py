@@ -31,7 +31,7 @@ class Florence2Detector(Detector):
         model_type: Literal["base", "large"],
     ):
         self.file_repository = file_repository
-        self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
         self.model, self.processor = self._load_model(model_type)
         self.task_prompt = "<OPEN_VOCABULARY_DETECTION>"
