@@ -79,12 +79,12 @@ class Florence2Detector(Detector):
         labels: list[str] = []
         bboxes: list[tuple[float, float, float, float]] = []
         for text in detector_input.texts:
-            _bboxes = self._detector(text=text, image=image)
+            _bboxes = self._detect(text=text, image=image)
             labels += [text] * len(_bboxes)
             bboxes += _bboxes
         return DetectorOutput(labels=labels, bboxes=bboxes)
 
-    def _detector(
+    def _detect(
         self, text: str, image: Image.Image
     ) -> list[tuple[float, float, float, float]]:
         prompt = f"{self.task_prompt}{text}"
