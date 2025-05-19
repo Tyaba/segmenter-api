@@ -18,7 +18,7 @@ class GroundingDinoDetector(Detector):
             self.device
         )
 
-    def detector(self, detector_input: DetectorInput) -> DetectorOutput:
+    def detect(self, detector_input: DetectorInput) -> DetectorOutput:
         inputs = self.processor(
             images=detector_input.image,
             text=detector_input.texts,

@@ -73,7 +73,7 @@ class Florence2Detector(Detector):
             return _load_model_from_path(f"microsoft/Florence-2-{model_type}")
 
     @stop_watch
-    def detector(self, detector_input: DetectorInput) -> DetectorOutput:
+    def detect(self, detector_input: DetectorInput) -> DetectorOutput:
         # 前処理
         image = detector_input.image.convert("RGB")
         labels: list[str] = []
