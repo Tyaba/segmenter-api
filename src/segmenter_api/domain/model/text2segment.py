@@ -10,7 +10,7 @@ from pydantic import (
 
 from segmenter_api.domain.factory.detector_factory import DetectorType
 from segmenter_api.domain.factory.segmenter_factory import SegmenterType
-from segmenter_api.domain.service.detector import Text2BboxOutput
+from segmenter_api.domain.service.detector import DetectorOutput
 from segmenter_api.domain.service.segmenter import Bbox2SegmentOutput
 from segmenter_api.utils.image import base642pil
 
@@ -27,7 +27,7 @@ class Text2SegmentOutput(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     masks: list[Image.Image]
     labels: list[str]
-    text2bbox_output: Text2BboxOutput
+    detector_output: DetectorOutput
     bbox2segment_output: Bbox2SegmentOutput
 
     @model_validator(mode="after")

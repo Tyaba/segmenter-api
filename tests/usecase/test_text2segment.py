@@ -38,11 +38,11 @@ def test_text2segment(
     # アサーション
     assert len(output.masks) == 1
     assert output.labels == ["test object"]
-    assert output.text2bbox_output.bboxes == [(0, 0, 50, 50)]
+    assert output.detector_output.bboxes == [(0, 0, 50, 50)]
     assert len(output.bbox2segment_output.masks) == 1
 
     # モックの呼び出し確認
     mock_detector_factory.create.assert_called_once_with(DetectorType.FLORENCE2_BASE)
     mock_segmenter_factory.create.assert_called_once_with(SegmenterType.SAM2)
-    mock_detector_factory.create.return_value.text2bbox.assert_called_once()
+    mock_detector_factory.create.return_value.detector.assert_called_once()
     mock_segmenter_factory.create.return_value.bbox2segment.assert_called_once()

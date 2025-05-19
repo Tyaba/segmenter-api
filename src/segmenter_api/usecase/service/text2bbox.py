@@ -14,66 +14,35 @@ from segmenter_api.domain.factory.detector_factory import (
     DetectorFactoryInterface,
     DetectorType,
 )
-from segmenter_api.domain.factory.segmenter_factory import (
-    SegmenterFactoryInterface,
-    SegmenterType,
-)
-from segmenter_api.domain.model.text2segment import (
-    Text2SegmentInput,
-    Text2SegmentOutput,
-)
+from segmenter_api.domain.model.text2bbox import Text2BboxInput, Text2BboxOutput
 from segmenter_api.domain.service.detector import DetectorInput, DetectorOutput
-from segmenter_api.domain.service.segmenter import Bbox2SegmentInput, Bbox2SegmentOutput
 from segmenter_api.utils.time import stop_watch
 
 
-class Text2SegmentUsecase:
+class Text2BboxUsecase:
     @inject
     def __init__(
         self,
-        segmenter_factory: SegmenterFactoryInterface,
         detector_factory: DetectorFactoryInterface,
     ):
-        self.segmenter_factory = segmenter_factory
         self.detector_factory = detector_factory
 
     @stop_watch
-    def text2segment(self, text2segment_input: Text2SegmentInput) -> Text2SegmentOutput:
-        detector = self.detector_factory.create(text2segment_input.detector_type)
-        segmenter = self.segmenter_factory.create(text2segment_input.segmenter_type)
+    def text2bbox(self, text2bbox_input: Text2BboxInput) -> Text2BboxOutput:
+        detector = self.detector_factory.create(text2bbox_input.detector_type)
         detector_output: DetectorOutput = detector.detect(
             detector_input=DetectorInput(
-                texts=text2segment_input.texts,
-                image=text2segment_input.image.convert("RGB"),
+                texts=text2bbox_input.texts,
+                image=text2bbox_input.image.convert("RGB"),
             )
         )
-        if len(detector_output.bboxes) == 0:
-            return Text2SegmentOutput(
-                masks=[],
-                labels=[],
-                detector_output=detector_output,
-                bbox2segment_output=Bbox2SegmentOutput(masks=[]),
-            )
         assert_bboxes_in_image(
             bboxes=detector_output.bboxes,
-            image_size=text2segment_input.image.size,
+            image_size=text2bbox_input.image.size,
         )
-        bbox2segment_output: Bbox2SegmentOutput = segmenter.bbox2segment(
-            bbox2segment_input=Bbox2SegmentInput(
-                image=text2segment_input.image.convert("RGB"),
-                bboxes=detector_output.bboxes,
-            )
-        )
-        masks = bbox2segment_output.masks
-        assert_mask_size_is_image_size(
-            masks=masks,
-            image_size=text2segment_input.image.size,
-        )
-        return Text2SegmentOutput(
-            masks=masks,
+        return Text2BboxOutput(
+            bboxes=detector_output.bboxes,
             labels=detector_output.labels,
-            detector_output=detector_output,
-            bbox2segment_output=bbox2segment_output,
         )
 
 
@@ -103,19 +72,16 @@ def main(args: Namespace) -> None:
     from segmenter_api.di import resolve
 
     input_image = Image.open(args.image_path)
-    output = resolve(Text2SegmentUsecase).text2segment(
-        Text2SegmentInput(
+    output = resolve(Text2BboxUsecase).text2segment(
+        Text2BboxInput(
             texts=[args.text],
             image=input_image,
             detector_type=DetectorType.FLORENCE2_BASE,
-            segmenter_type=SegmenterType.SAM2,
         )
     )
     args.output_image_dir.mkdir(parents=True, exist_ok=True)
-    for i, (mask, label) in enumerate(zip(output.masks, output.labels, strict=True)):
-        cropped = input_image.copy().convert("RGBA")
-        cropped.putalpha(mask)
-        cropped.save(args.output_image_dir / f"{i}_{label}.png")
+    for i, (bbox, label) in enumerate(zip(output.bboxes, output.labels, strict=True)):
+        print(f"{i}: {label}, {bbox}")
 
 
 if __name__ == "__main__":

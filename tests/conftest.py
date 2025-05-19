@@ -6,7 +6,7 @@ from pytest_mock import MockFixture
 
 from segmenter_api.domain.factory.detector_factory import DetectorFactoryInterface
 from segmenter_api.domain.factory.segmenter_factory import SegmenterFactoryInterface
-from segmenter_api.domain.service.detector import Detector, Text2BboxOutput
+from segmenter_api.domain.service.detector import Detector, DetectorOutput
 from segmenter_api.domain.service.segmenter import (
     Bbox2SegmentOutput,
     ForegroundSegmentOutput,
@@ -17,7 +17,7 @@ from segmenter_api.domain.service.segmenter import (
 @pytest.fixture
 def mock_detector(mocker: MockFixture) -> Detector:
     detector = mocker.Mock(spec=Detector)
-    detector.text2bbox.return_value = Text2BboxOutput(
+    detector.detect.return_value = DetectorOutput(
         bboxes=[(0, 0, 50, 50)], labels=["test object"]
     )
     return detector

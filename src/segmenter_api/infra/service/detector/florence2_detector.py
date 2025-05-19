@@ -10,8 +10,8 @@ from transformers.models.auto.processing_auto import AutoProcessor
 from segmenter_api.domain.repository.file import FileRepositoryInterface
 from segmenter_api.domain.service.detector import (
     Detector,
-    Text2BboxInput,
-    Text2BboxOutput,
+    DetectorInput,
+    DetectorOutput,
 )
 from segmenter_api.settings import get_settings
 from segmenter_api.utils.logger import get_logger
@@ -73,18 +73,18 @@ class Florence2Detector(Detector):
             return _load_model_from_path(f"microsoft/Florence-2-{model_type}")
 
     @stop_watch
-    def text2bbox(self, text2bbox_input: Text2BboxInput) -> Text2BboxOutput:
+    def detector(self, detector_input: DetectorInput) -> DetectorOutput:
         # 前処理
-        image = text2bbox_input.image.convert("RGB")
+        image = detector_input.image.convert("RGB")
         labels: list[str] = []
         bboxes: list[tuple[float, float, float, float]] = []
-        for text in text2bbox_input.texts:
-            _bboxes = self._text2bbox(text=text, image=image)
+        for text in detector_input.texts:
+            _bboxes = self._detector(text=text, image=image)
             labels += [text] * len(_bboxes)
             bboxes += _bboxes
-        return Text2BboxOutput(labels=labels, bboxes=bboxes)
+        return DetectorOutput(labels=labels, bboxes=bboxes)
 
-    def _text2bbox(
+    def _detector(
         self, text: str, image: Image.Image
     ) -> list[tuple[float, float, float, float]]:
         prompt = f"{self.task_prompt}{text}"

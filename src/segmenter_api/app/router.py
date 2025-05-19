@@ -8,6 +8,11 @@ from segmenter_api.usecase.ui.foreground_segment import (
     ForegroundSegmentResponse,
     ForegroundSegmentUserInterface,
 )
+from segmenter_api.usecase.ui.text2bbox import (
+    Text2BboxRequest,
+    Text2BboxResponse,
+    Text2BboxUserInterface,
+)
 from segmenter_api.usecase.ui.text2segment import (
     Text2SegmentRequest,
     Text2SegmentResponse,
@@ -37,3 +42,13 @@ def foreground_segment(
     ),
 ) -> ForegroundSegmentResponse:
     return foreground_segment_user_interface.foreground_segment(request)
+
+
+@router.post("/text2bbox", response_model=Text2BboxResponse)
+def text2bbox(
+    request: Text2BboxRequest,
+    text2bbox_user_interface: Text2BboxUserInterface = Depends(
+        partial(resolve, Text2BboxUserInterface)
+    ),
+) -> Text2BboxResponse:
+    return text2bbox_user_interface.text2bbox(request)

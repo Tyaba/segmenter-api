@@ -31,5 +31,5 @@ class Text2SegmentUserInterface:
         return Text2SegmentResponse(
             labels=usecase_output.labels,
             masks=[pil2base64(image=mask) for mask in usecase_output.masks],
-            bboxes=[list(bbox) for bbox in usecase_output.text2bbox_output.bboxes],
+            bboxes=[list(bbox) for bbox in usecase_output.detector_output.bboxes],
         )

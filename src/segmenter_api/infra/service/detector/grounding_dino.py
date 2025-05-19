@@ -4,8 +4,8 @@ from transformers.models.auto.processing_auto import AutoProcessor
 
 from segmenter_api.domain.service.detector import (
     Detector,
-    Text2BboxInput,
-    Text2BboxOutput,
+    DetectorInput,
+    DetectorOutput,
 )
 
 
@@ -18,10 +18,10 @@ class GroundingDinoDetector(Detector):
             self.device
         )
 
-    def text2bbox(self, text2bbox_input: Text2BboxInput) -> Text2BboxOutput:
+    def detector(self, detector_input: DetectorInput) -> DetectorOutput:
         inputs = self.processor(
-            images=text2bbox_input.image,
-            text=text2bbox_input.texts,
+            images=detector_input.image,
+            text=detector_input.texts,
             return_tensors="pt",
         ).to(self.device)
         with torch.no_grad():
@@ -32,13 +32,13 @@ class GroundingDinoDetector(Detector):
             inputs.input_ids,
             box_threshold=0.4,
             text_threshold=0.3,
-            target_sizes=[text2bbox_input.image.size[::-1]],
+            target_sizes=[detector_input.image.size[::-1]],
         )
 
         result = results[0]
         labels = result["labels"]
         bboxes = result["boxes"].tolist()
-        return Text2BboxOutput(
+        return DetectorOutput(
             labels=labels,
             bboxes=bboxes,
         )

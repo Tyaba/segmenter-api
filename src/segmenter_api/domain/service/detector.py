@@ -5,13 +5,13 @@ from PIL import Image
 from pydantic import BaseModel, ConfigDict, model_validator
 
 
-class Text2BboxInput(BaseModel):
+class DetectorInput(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     texts: list[str]
     image: Image.Image
 
 
-class Text2BboxOutput(BaseModel):
+class DetectorOutput(BaseModel):
     labels: list[str]
     bboxes: list[tuple[float, float, float, float]]
 
@@ -25,5 +25,5 @@ class Text2BboxOutput(BaseModel):
 
 class Detector(ABC):
     @abstractmethod
-    def text2bbox(self, text2bbox_input: Text2BboxInput) -> Text2BboxOutput:
+    def detect(self, detector_input: DetectorInput) -> DetectorOutput:
         raise NotImplementedError
