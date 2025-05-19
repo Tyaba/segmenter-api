@@ -44,5 +44,5 @@ def test_text2segment(
     # モックの呼び出し確認
     mock_detector_factory.create.assert_called_once_with(DetectorType.FLORENCE2_BASE)
     mock_segmenter_factory.create.assert_called_once_with(SegmenterType.SAM2)
-    mock_detector_factory.create.return_value.detector.assert_called_once()
+    mock_detector_factory.create.return_value.detect.assert_called_once()
     mock_segmenter_factory.create.return_value.bbox2segment.assert_called_once()
